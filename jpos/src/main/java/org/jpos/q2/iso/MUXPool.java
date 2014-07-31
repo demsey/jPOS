@@ -48,6 +48,7 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
     boolean checkEnabled;
     Space sp;
        
+    @Override
     public void initService () throws ConfigurationException {
         Element e = getPersist ();
         muxName = toStringArray(e.getChildTextTrim ("muxes"));
@@ -66,9 +67,13 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
         }
         NameRegistrar.register ("mux."+getName (), this);
     }
+
+    @Override
     public void stopService () {
         NameRegistrar.unregister ("mux."+getName ());
     }
+
+    @Override
     public ISOMsg request (ISOMsg m, long timeout) throws ISOException {
         long maxWait = System.currentTimeMillis() + timeout;
         MUX mux = getMUX(m,maxWait);
@@ -80,6 +85,8 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
         }
         return null;
     }
+
+    @Override
     public void send (ISOMsg m) throws ISOException, IOException {
         long maxWait = 1000L; // reasonable default
         MUX mux = getMUX(m,maxWait);
@@ -89,12 +96,15 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
 
         mux.send(m);
     }
+
+    @Override
     public boolean isConnected() {
         for (MUX m : mux)
             if (isUsable(m))
                 return true;
         return false;
     }
+
     protected MUX firstAvailableMUX (long maxWait) {
         do {
             for (MUX m : mux)
@@ -126,6 +136,8 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
         }
         return ss;
     }
+
+    @Override
     public void request (ISOMsg m, long timeout, final ISOResponseListener r, final Object handBack) 
         throws ISOException 
     {
