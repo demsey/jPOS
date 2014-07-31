@@ -97,9 +97,12 @@ public class ISOMUX implements Runnable, LogSource, MUX,
         setLogger (logger, realm);
         initMUX (c);
     }
+
+    @Override
     public void setConfiguration (Configuration cfg) {
         setTraceNumberField (cfg.getInt ("tracenofield"));
     }
+
     private void initMUX (ISOChannel c) {
         doConnect = true;
         channel = c;
@@ -195,68 +198,88 @@ public class ISOMUX implements Runnable, LogSource, MUX,
         cnt[RX_PENDING] = rxQueue.size();
         return cnt;
     }
+
+    @Override
     public void resetCounters () {
         cnt = new int[SIZEOF_CNT];
     }
+
     /**
      * @return number of re-connections on the underlying channel
      */
+    @Override
     public int getConnectionCount () {
         return cnt[CONNECT];
     }
+
     /**
      * @return number of transmitted messages
      */
+    @Override
     public int getTransmitCount () {
         return cnt[TX];
     }
     /**
      * @return number of expired messages
      */
+    @Override
     public int getExpiredCount () {
         return cnt[TX_EXPIRED];
     }
     /**
      * @return number of messages waiting to be transmited
      */
+    @Override
     public int getTransmitPendingCount () {
         return txQueue.size();
     }
+
     /**
      * @return number of received messages
      */
+    @Override
     public int getReceiveCount () {
         return cnt[RX];
     }
+
     /**
      * @return number of unanswered messages
      */
+    @Override
     public int getReceiveExpiredCount () {
         return cnt[RX_EXPIRED];
     }
+
     /**
      * @return number of messages waiting for response
      */
+    @Override
     public int getReceivePendingCount () {
         return rxQueue.size();
     }
+
     /**
      * @return number of unknown messages received
      */
+    @Override
     public int getUnknownCount () {
         return cnt[RX_UNKNOWN];
     }
     /**
      * @return number of forwarded messages received
      */
+    @Override
     public int getForwardedCount () {
         return cnt[RX_FORWARDED];
     }
+
     private class Receiver implements Runnable, LogSource {
         Runnable parent;
         protected Receiver(Runnable p) {
             parent = p;
         }
+
+        @Override
         public void run() {
             int i = 0;
             while (!terminate || !rxQueue.isEmpty() || !txQueue.isEmpty()) {
@@ -353,6 +376,8 @@ public class ISOMUX implements Runnable, LogSource, MUX,
             txQueue.remove(o);
         }
     }
+
+    @Override
     public void run () {
         tx = Thread.currentThread();
 
@@ -442,10 +467,12 @@ public class ISOMUX implements Runnable, LogSource, MUX,
         txQueue.add(r);
         this.notify();
     }
+
     /**
      * send a message over channel, usually a
      * response from an ISORequestListener
      */
+    @Override
     synchronized public void send(ISOMsg m) {
         txQueue.add(m);
         this.notify();
@@ -491,19 +518,27 @@ public class ISOMUX implements Runnable, LogSource, MUX,
         terminate(0);
     }
 
+    @Override
     public boolean isConnected() {
         return channel.isConnected();
     }
+
+    @Override
     public void setLogger (Logger logger, String realm) {
         this.logger = logger;
         this.realm  = realm;
     }
+
+    @Override
     public String getRealm () {
         return realm;
     }
+
+    @Override
     public Logger getLogger() {
         return logger;
     }
+
     public boolean isTerminating() {
         return terminate;
     }
@@ -537,6 +572,7 @@ public class ISOMUX implements Runnable, LogSource, MUX,
      * You can prevent this behaveour by passing a false value.
      * @param connect false to prevent connection (default true)
      */
+    @Override
     public void setConnect (boolean connect) {
         this.doConnect = connect;
         if (!connect && isConnected()) {
@@ -551,23 +587,31 @@ public class ISOMUX implements Runnable, LogSource, MUX,
             }
         }
     }
+
     /**
      * @return connect flag value
      */
+    @Override
     public boolean getConnect() {
         return doConnect;
     }
+
+    @Override
     public void dump (PrintStream p, String indent) {
         p.println (indent + "<mux-stats connected=\"" + 
             channel.isConnected() + "\">");
         showCounters (p);
         p.println (indent + "</mux-stats>");
     }
+
+    @Override
     public ISOMsg request (ISOMsg m, long timeout) throws ISOException {
         ISORequest req = new ISORequest (m);
         queue (req);
         return req.getResponse ((int) timeout);
     }
+
+    @Override
     public void request (ISOMsg m, long timeout, ISOResponseListener r, Object handBack) 
         throws ISOException 
     {
