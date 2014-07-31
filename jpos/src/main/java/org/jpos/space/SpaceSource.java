@@ -36,10 +36,12 @@ public class SpaceSource implements ISOSource, SpaceListener<String,ISOMsg>, Ser
     private String key;
     private long timeout;
     private boolean connected;
+    private boolean signed;
 
     public SpaceSource(LocalSpace sp, ISOSource source, long timeout) {
         this.key = "SS." + UUID.randomUUID().toString();
         this.connected = source.isConnected();
+        this.connected = source.isSigned();
         this.sp = sp;
         sp.addListener(key, this, timeout + 10000L);
         isp.out (key, source, timeout);
@@ -60,6 +62,11 @@ public class SpaceSource implements ISOSource, SpaceListener<String,ISOMsg>, Ser
     @Override
     public boolean isConnected() {
         return connected; // should be called _was_ connected
+    }
+
+    @Override
+    public boolean isSigned() {
+        return signed; // should be called _was_ signed
     }
 
     @Override
