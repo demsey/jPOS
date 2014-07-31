@@ -124,6 +124,11 @@ public class QueryHostTest implements TransactionConstants, MUX {
         return true;
     }
 
+    @Override
+    public boolean isSigned() {
+        return true;
+    }
+
     private ISOMsg createDummyRequest() {
         ISOMsg m = new ISOMsg("0800");
         m.set(7, ISODate.getANSIDate(new Date()));
