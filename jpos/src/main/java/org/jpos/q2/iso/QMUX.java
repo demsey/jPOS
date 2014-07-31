@@ -50,6 +50,7 @@ public class QMUX
     protected LocalSpace sp;
     protected String in, out, unhandled;
     protected String[] ready;
+    protected String[] signed;
     protected String[] key;
     protected String ignorerc;
     protected String[] mtiMapping;
@@ -90,6 +91,7 @@ public class QMUX
             }
         }
         ready     = toStringArray(e.getChildTextTrim ("ready"));
+        signed    = toStringArray(e.getChildTextTrim ("signed"));
         mtiMapping = toStringArray(e.getChildTextTrim ("mtimapping"));
         if (mtiMapping == null || mtiMapping.length != 3) 
             mtiMapping = new String[] { nomap, nomap, "0022446789" };
@@ -452,13 +454,30 @@ public class QMUX
 
     @Override
     public boolean isConnected() {
-        if (running() && ready != null && ready.length > 0) {
-            for (String aReady : ready)
-                if (sp.rdp(aReady) != null)
-                    return true;
+        if (!running())
             return false;
-        }
-        return running();
+
+        if (ready == null || ready.length == 0)
+            return true;
+
+        for (String aReady : ready)
+            if (sp.rdp(aReady) != null)
+                return true;
+        return false;
+    }
+
+    @Override
+    public boolean isSigned() {
+        if (!running())
+            return false;
+
+        if (signed == null || signed.length == 0)
+          return isConnected();
+
+        for (String aSigned : signed)
+            if (sp.rdp(aSigned) != null)
+                return true;
+        return false;
     }
 
     @Override

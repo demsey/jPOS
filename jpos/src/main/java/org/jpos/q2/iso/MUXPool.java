@@ -100,7 +100,15 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
     @Override
     public boolean isConnected() {
         for (MUX m : mux)
-            if (isUsable(m))
+            if (m.isConnected())
+                return true;
+        return false;
+    }
+
+    @Override
+    public boolean isSigned() {
+        for (MUX m : mux)
+            if (m.isSigned())
                 return true;
         return false;
     }
@@ -108,7 +116,7 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
     protected MUX firstAvailableMUX (long maxWait) {
         do {
             for (MUX m : mux)
-                if (isUsable(m))
+                if (m.isSigned())
                     return m;
             ISOUtil.sleep (1000);
         } while (System.currentTimeMillis() < maxWait);
@@ -118,7 +126,7 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
         do {
             for (int i=0; i<mux.length; i++) {
                 int j = (mnumber+i) % mux.length;
-                if (isUsable(mux[j]))
+                if (mux[j].isSigned())
                     return mux[j];
                 msgno.incrementAndGet();
             }
@@ -175,7 +183,7 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
                     ChannelAdaptor channel = (ChannelAdaptor)NameRegistrar.get (channelName);
                     for (MUX mx : mux) {
                         if(channel != null && ((QMUX)mx).getInQueue().equals(channel.getOutQueue())){
-                            if(isUsable(mx))
+                            if(mx.isSigned())
                                 return mx;
                         }
                     }
@@ -192,7 +200,7 @@ public class MUXPool extends QBeanSupport implements MUX, MUXPoolMBean {
             if(splitField != null && !"".equals(splitField)){
                 if(m.hasField(splitField) && ISOUtil.isNumeric(m.getString(splitField),10)){
                     MUX mx = mux[(int)(Long.valueOf(m.getString(splitField))%mux.length)];
-                    if(isUsable(mx))
+                    if(mx.isSigned())
                         return mx;
                 }
             }
