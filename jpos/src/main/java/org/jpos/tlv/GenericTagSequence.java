@@ -34,15 +34,18 @@ public class GenericTagSequence extends TagSequenceBase {
     }
 
 
+    @Override
     protected TagSequence createTagValueSequence(String tag) {
         return new GenericTagSequence(tag);
     }
 
-    protected TagValue createLiteralTagValuePair(String tag, String value) throws ISOException {
+    @Override
+    protected TagValue createLiteralTagValuePair(String tag, String value) {
         return new LiteralTagValue(tag, value);
     }
 
-    protected TagValue createBinaryTagValuePair(String tag, byte[] value) throws ISOException {
+    @Override
+    protected TagValue createBinaryTagValuePair(String tag, byte[] value) {
         return new BinaryTagValue(tag, value);
     }
 
