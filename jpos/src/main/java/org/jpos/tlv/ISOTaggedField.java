@@ -99,19 +99,31 @@ public class ISOTaggedField extends ISOComponent {
 
     @Override
     public Object getKey() throws ISOException {
-        return delegate.getKey();
+        try {
+            return delegate.getKey();
+        } catch (ISOException ex) {
+            throw new UnsupportedOperationException(ex);
+        }
     }
 
 
     @Override
-    public Object getValue() throws ISOException {
-        return delegate.getValue();
+    public Object getValue() {
+        try {
+            return delegate.getValue();
+        } catch (ISOException ex) {
+            throw new UnsupportedOperationException(ex);
+        }
     }
 
 
     @Override
-    public byte[] getBytes() throws ISOException {
-        return delegate.getBytes();
+    public byte[] getBytes() {
+        try {
+            return delegate.getBytes();
+        } catch (ISOException ex) {
+            throw new UnsupportedOperationException(ex);
+        }
     }
 
 

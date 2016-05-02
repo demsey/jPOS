@@ -44,7 +44,7 @@ public interface TagSequence<T> extends TagValue<T> {
 
     List<TagValue<T>> getOrderedList();
 
-    void writeTo(ISOMsg isoMsg) throws ISOException;
+    void writeTo(ISOMsg isoMsg);
 
-    void readFrom(ISOMsg isoMsg) throws ISOException;
+    void readFrom(ISOMsg isoMsg);
 }
