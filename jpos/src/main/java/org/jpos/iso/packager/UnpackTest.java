@@ -5,12 +5,14 @@
  */
 package org.jpos.iso.packager;
 
+import org.jpos.iso.ISOComponent;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.ISOPackager;
 import org.jpos.iso.ISOUtil;
+import org.jpos.tlv.ISOTaggedField;
 
-/**
+/** 
  *
  * @author demsey
  */
@@ -27,9 +29,12 @@ public class UnpackTest {
         msg.set(4, "000000015499");
         msg.set(7, "0428220821");
         msg.set(49, "985");
-        msg.set("123.8", "Kot");
-        msg.set("123.10.1", "a");
-        msg.set("123.10.2", "cdef");
+        ISOComponent m123 = new ISOMsg(123);
+        msg.set(m123);
+        m123.set(new ISOTaggedField("008",m123));
+//        msg.set("123.8", "Kot");
+//        msg.set("123.10.1", "a");
+//        msg.set("123.10.2", "cdef");
 
         byte[] bytes = msg.pack();
         System.out.println();
@@ -37,7 +42,7 @@ public class UnpackTest {
         System.out.println();
         System.out.println(ISOUtil.hexString(bytes));
 
-        bytes = ISOUtil.hex2byte("31323030D200000000008000000000000000002031373636363737373838383232323030303431303030303030303135343939303432383232303832313938353035343130303431616364656620202020202020202020202020202020202020202020202020202020202020202020202030383030334B6F74");
+//        bytes = ISOUtil.hex2byte("31323030D200000000008000000000000000002031373636363737373838383232323030303431303030303030303135343939303432383232303832313938353035343130303431616364656620202020202020202020202020202020202020202020202020202020202020202020202030383030334B6F74");
         msg = new ISOMsg();
         msg.setPackager(CSSHI_PACKAGER);
         msg.unpack(bytes);
