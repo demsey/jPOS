@@ -1578,7 +1578,7 @@
       length="999"
       name="Reserved for national use"
       class="org.jpos.iso.IFA_LLLCHAR"/>
-  <isofieldpackager
+  <!--isofieldpackager
       id="123"
       length="999"
       name="Reserved for Private Use"
@@ -1592,8 +1592,8 @@
             token="008"
             name="Secure Internet Validation"
             class="org.jpos.tlv.packager.IFTA_LLLCHAR" />
-  </isofieldpackager>
-  <!--isofieldpackager
+  </isofieldpackager-->
+  <isofieldpackager
       id="123"
       length="999"
       name="Reserved for Private Use"
@@ -1652,8 +1652,7 @@
             name="UCAF Data"
             class="org.jpos.iso.IFA_TTLLLCHAR"
             emitBitmap="false" firstField="1"
-            tagMapper="org.jpos.iso.packager.TTDecimalTagMapper"
-            packager="org.jpos.iso.packager.GenericTaggedFieldsPackager">
+            packager="org.jpos.iso.packager.GenericSubFieldPackager">
             <isofield
                   id="1"
                   length="1"
@@ -2050,7 +2049,7 @@
             length="1"
             name="Additional Card Data Input Capability"
             class="org.jpos.iso.IFA_TTLLLCHAR" />
-  </isofieldpackager-->
+  </isofieldpackager>
   <isofield
       id="124"
       length="999"
