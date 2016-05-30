@@ -53,6 +53,12 @@ public class GenericTaggedFieldsPackager extends GenericPackager
       return fieldId;
     }
 
+    protected TagMap unpackTLV(byte[] b) {
+        TagMap tm = new TagMap();
+        tm.unpack(new String(b, ISOUtil.CHARSET));
+        return tm;
+    }
+
     @Override
     public int unpack(ISOComponent m, byte[] b) throws ISOException {
         LogEvent evt = new LogEvent(this, "unpack");
@@ -65,16 +71,14 @@ public class GenericTaggedFieldsPackager extends GenericPackager
                 evt.addMessage(ISOUtil.hexString(b));
 
             int consumed = 0;
-            int maxField = fld.length;
-            for (int i = getFirstField(); i < maxField && consumed < b.length; i++) {
-                if (fld[i] != null) {
-                    ISOComponent c = fld[i].createComponent(i);
-                    int unpacked = fld[i].unpack(c, b, consumed);
-                    consumed = consumed + unpacked;
-                    if (unpacked > 0) {
-                        m.set(c);
-                    }
-                }
+            TagMap tm = unpackTLV(b);
+            for (Tag tag : tm.values()) {
+                int i =  tagMapper.getFieldNumberForTag(fieldId, tag.getTagId());
+                ISOComponent c = fld[i].createComponent(i);
+                byte[] bb = tag.getTLV().getBytes(ISOUtil.CHARSET);
+                int unpacked = fld[i].unpack(c, bb, 0);
+                consumed = consumed + unpacked;
+                m.set(c);
             }
             if (b.length != consumed) {
                 evt.addMessage(
