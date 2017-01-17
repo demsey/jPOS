@@ -18,17 +18,78 @@
 
 package org.jpos.space;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
 
 import org.jpos.iso.ISOMsg;
 import org.jpos.transaction.Context;
 import org.jpos.util.Profiler;
 import org.jpos.iso.ISOUtil;
+import org.jpos.util.TPS;
 
 @SuppressWarnings("unchecked")
 public class JESpaceTestCase extends TestCase {
-    public static final int COUNT = 100;
+
+    LocalSpace<String,Object> sp1;
+
+    List<Long> t1 = new ArrayList<>();
+    List<Long> t2 = new ArrayList<>();
+
+    TPS tpsOut = new TPS(100L, false);
+    TPS tpsIn  = new TPS(100L, false);
+
+    class WriteSpaceTask implements Runnable {
+        String key;
+
+        WriteSpaceTask(String key) {
+           this.key = key;
+        }
+        @Override
+        public void run() {
+            long stamp = System.nanoTime();
+            for (int i = 0; i < COUNT; i++) {
+                sp1.out(key, Boolean.TRUE);
+                tpsOut.tick();
+            }
+            long stamp2 = System.nanoTime();
+            t1.add(stamp2 - stamp);
+            System.err.println("Write " + key + " out: "
+                    + (stamp2 - stamp) / 1000000 + " " + tpsOut.toString()
+            );
+        }
+    }
+
+    class ReadSpaceTask implements Runnable {
+        String key;
+
+        ReadSpaceTask(String key) {
+           this.key = key;
+        }
+        @Override
+        public void run() {
+            long stamp = System.nanoTime();
+            for (int i = 0; i < COUNT; i++) {
+                sp1.in(key);
+                tpsIn.tick();
+            }
+            long stamp2 = System.nanoTime();
+            t2.add(stamp2 - stamp);
+            System.err.println("Read  " + key + "  in: "
+                    + (stamp2 - stamp) / 1000000 + " " + tpsIn.toString()
+            );
+        }
+    }
+
+
+    public static final int COUNT = 100000;
     JESpace<String,Object> sp;
+    @Override
     public void setUp () {
         sp = (JESpace<String,Object>) 
             JESpace.getSpace ("space-test", "build/resources/test/space-test");
@@ -185,4 +246,44 @@ public class JESpaceTestCase extends TestCase {
         sp.out("CTX", ctx);
         assertNotNull("entry should not be null", sp.in("CTX"));
     }
+
+    private void printAvg(List<Long> times, String prefix){
+        long avg = 0;
+        for (Long t : times)
+            avg += t;
+        if (avg != 0) {
+            avg /= times.size();
+            avg /= 1000000;
+        }
+        System.out.println(prefix + avg);
+    }
+
+    //@Test
+    public void testReadPerformance() throws Throwable {
+        sp1 = new TSpace<>();
+    //    sp1 = new JESpace("space-test2", "build/resources/test/space-test");
+        t1.clear();
+        t2.clear();
+
+        int size = 2;
+        ExecutorService es = new ThreadPoolExecutor(size, Integer.MAX_VALUE,
+                              30, TimeUnit.SECONDS, new SynchronousQueue());
+        ((ThreadPoolExecutor) es).prestartAllCoreThreads();
+
+        List<Future> fl = new ArrayList<>();
+        for (int i = 0; i < size; i++)
+            fl.add(es.submit(new WriteSpaceTask("PerformTask-" + i)));
+        for (Future f : fl)
+            f.get();
+        printAvg(t1, "Avg. write: ");
+
+        fl.clear();
+        for (int i = 0; i < size; i++)
+            fl.add(es.submit(new ReadSpaceTask("PerformTask-" + i)));
+        for (Future f : fl)
+            f.get();
+        es.shutdown();
+        printAvg(t2, "Avg. read : ");
+    }
+
 }
