@@ -39,21 +39,35 @@ public class EMVTagSequence extends TagSequenceBase {
         return new EMVTagSequence(tag);
     }
 
+    /**
+     *
+     * @param tag
+     * @param value
+     * @return
+     * @throws IllegalArgumentException
+     */
     @Override
-    protected EMVTag createLiteralTagValuePair(String tag, String value) throws ISOException {
+    protected EMVTag createLiteralTagValuePair(String tag, String value) {
         try {
             return new LiteralEMVTag(EMVStandardTagType.forHexCode(tag), value);
         } catch (UnknownTagNumberException e) {
-            throw new ISOException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
+    /**
+     *
+     * @param tag
+     * @param value
+     * @return
+     * @throws IllegalArgumentException
+     */
     @Override
-    protected EMVTag createBinaryTagValuePair(String tag, byte[] value) throws ISOException {
+    protected EMVTag createBinaryTagValuePair(String tag, byte[] value) {
         try {
             return new BinaryEMVTag(EMVStandardTagType.forHexCode(tag), value);
         } catch (UnknownTagNumberException e) {
-            throw new ISOException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 }
