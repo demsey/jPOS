@@ -1283,7 +1283,42 @@ public interface SMAdapter {
     Pair<PublicKey, SecurePrivateKey> generateKeyPair(AlgorithmParameterSpec spec)
       throws SMException;
 
+    /**
+     * Import Public Key by generating a MAC on it.
+     *
+     * @param pub public key
+     * @return MAC on the public key
+     * @throws SMException
+     */
+    public byte[] importPublicKey(PublicKey pub) throws SMException;
 
+    /**
+     * Export key under an RSA Public Key.
+     *
+     * @param key DES key under LMK
+     * @param pub public key
+     * @param mac MAC on the public key
+     * @return encrypted key bytes.
+     * @throws SMException
+     */
+    public byte[] exportKey(SecureDESKey key, PublicKey pub, byte[] mac) throws SMException;
+
+    /**
+     * Export key under an RSA Public Key with signarure.
+     *
+     * @param key DES key under LMK
+     * @param pub public key
+     * @param mac MAC on the public key
+     * @param priv private key under LMK
+     * @param hash signature hash identifier
+     * @param header block of data to be pre-pended to the encrypted key, prior to signing.
+     * @param footer block of data to be appended to the encrypted key, prior to signing.
+     * @return pair of encrypted key and signature bytes
+     * @throws SMException
+     */
+    public Pair<byte[], byte[]> exportKeyWithSignature(SecureDESKey key, PublicKey pub
+            , byte[] mac, SecurePrivateKey priv, MessageDigest hash
+            , byte[] header, byte[] footer) throws SMException;
 
     /**
      * Calculate signature of Data Block.
