@@ -56,7 +56,7 @@ public class ISOMsg extends ISOComponent
      * Creates an ISOMsg
      */
     public ISOMsg () {
-        fields = new TreeMap<Integer,Object>();
+        fields = new TreeMap<>();
         maxField = -1;
         dirty = true;
         maxFieldDirty=true;
@@ -86,14 +86,9 @@ public class ISOMsg extends ISOComponent
      * Creates an ISOMsg with given mti
      * @param mti Msg's MTI
      */
-    @SuppressWarnings("PMD.EmptyCatchBlock")
-    public ISOMsg (String mti) {
+    public ISOMsg(String mti) {
         this();
-        try {
-            setMTI (mti);
-        } catch (ISOException ignored) {
-            // Should never happen as this is not an inner message
-        }
+        setMTI (mti);
     }
     /**
      * Sets the direction information related to this message
@@ -123,8 +118,9 @@ public class ISOMsg extends ISOComponent
 
     /**
      * Sets optional trailer data.
-     * <p/>
-     * Note: The trailer data requires a customised channel that explicitily handles the trailer data from the ISOMsg.
+     *
+     * @apiNote The trailer data requires a customised channel that explicitily
+     *          handles the trailer data from the ISOMsg.
      *
      * @param trailer The trailer data.
      * @see BaseChannel#getMessageTrailer(ISOMsg).
@@ -202,16 +198,21 @@ public class ISOMsg extends ISOComponent
     }
     /**
      * Set a field within this message
-     * @param c - a component
+     * @param c a component
      */
-    public void set (ISOComponent c) throws ISOException {
-        if (c != null) {
-            Integer i = (Integer) c.getKey();
-            fields.put (i, c);
-            if (i > maxField)
-                maxField = i;
-            dirty = true;
-        }
+    @Override
+    public void set(ISOComponent c) {
+        if (c == null)
+            return;
+
+        Integer i = null;
+        try {
+            i = (Integer) c.getKey();
+        } catch (ISOException ex ) {} //NOPMD: it never happens
+        fields.put (i, c);
+        if (i > maxField)
+            maxField = i;
+        dirty = true;
     }
 
     /**
@@ -226,7 +227,6 @@ public class ISOMsg extends ISOComponent
             return;
         }
 
-        try {
             if (!(packager instanceof ISOBasePackager)) {
                 // No packager is available, we can't tell what the field
                 // might be, so treat as a String!
@@ -241,7 +241,6 @@ public class ISOMsg extends ISOComponent
                     set(new ISOField(fldno, value));
                 }
             }
-        } catch (ISOException ex) {}; //NOPMD: never happens for the given arguments of set methods
     }
 
     /**
@@ -267,10 +266,8 @@ public class ISOMsg extends ISOComponent
                     if (value == null) {
                         break;
                     } else {
-                        try {
-                            // We have a value to set, so adding a level to hold it is sensible.
-                            m.set(m = new ISOMsg (fldno));
-                        } catch (ISOException ex) {} //NOPMD: never happens for the given arguments of set methods
+                        // We have a value to set, so adding a level to hold it is sensible.
+                        m.set(m = new ISOMsg (fldno));
                     }
             } else {
                 m.set(fldno, value);
@@ -328,9 +325,7 @@ public class ISOMsg extends ISOComponent
                 if (obj instanceof ISOMsg)
                     m = (ISOMsg) obj;
                 else
-                    try {
-                        m.set(m = new ISOMsg (fldno));
-                    } catch (ISOException ex) {} //NOPMD: never happens for the given arguments of set methods
+                    m.set(m = new ISOMsg (fldno));
             } else {
                 m.set(fldno, value);
                 break;
@@ -350,9 +345,7 @@ public class ISOMsg extends ISOComponent
             return;
         }
 
-        try {
-            set(new ISOBinaryField(fldno, value));
-        } catch (ISOException ex) {}; //NOPMD: never happens for the given arguments of set methods
+        set(new ISOBinaryField(fldno, value));
     }
 
 
@@ -783,11 +776,7 @@ public class ISOMsg extends ISOComponent
             m.fields = new TreeMap();
             for (int field : fields) {
                 if (hasField(field)) {
-                    try {
-                        m.set(getComponent(field));
-                    } catch (ISOException ignored) {
-                        // should never happen
-                    }
+                    m.set(getComponent(field));
                 }
             }
             return m;
@@ -803,15 +792,10 @@ public class ISOMsg extends ISOComponent
      * and template handling)
      * @param m ISOMsg to merge
      */
-    @SuppressWarnings("PMD.EmptyCatchBlock")
     public void merge (ISOMsg m) {
         for (int i=0; i<=m.getMaxField(); i++)
-            try {
-                if (m.hasField(i))
-                    set (m.getComponent(i));
-            } catch (ISOException ignored) {
-                // should never happen
-            }
+            if (m.hasField(i))
+                set (m.getComponent(i));
     }
 
     /**
@@ -856,11 +840,10 @@ public class ISOMsg extends ISOComponent
     }
     /**
      * @param mti new MTI
-     * @exception ISOException if message is inner message
      */
-    public void setMTI (String mti) throws ISOException {
+    public void setMTI (String mti) {
         if (isInner())
-            throw new ISOException ("can't setMTI on inner message");
+            return;
         set (new ISOField (0, mti));
     }
     /**
@@ -888,40 +871,49 @@ public class ISOMsg extends ISOComponent
 
     /**
      * @return true is message has MTI field
-     * @exception ISOException if this is an inner message
      */
-    public boolean hasMTI() throws ISOException {
+    public boolean hasMTI() {
         if (isInner())
-            throw new ISOException ("can't hasMTI on inner message");
+            return false;
         else
             return hasField(0);
     }
+
     /**
      * @return current MTI
-     * @exception ISOException on inner message or MTI not set
      */
-    public String getMTI() throws ISOException {
+    public String getMTI() {
         if (isInner())
-            throw new ISOException ("can't getMTI on inner message");
+            return null;
         else if (!hasField(0))
-            throw new ISOException ("MTI not available");
+            return null;
         return (String) getValue(0);
     }
 
     /**
      * @return true if message "seems to be" a request
-     * @exception ISOException on MTI not set
      */
-    public boolean isRequest() throws ISOException {
-        return Character.getNumericValue(getMTI().charAt (2))%2 == 0;
+    public boolean isRequest() {
+        if (getString(0) == null)
+            return false;
+        char[] mti = getString(0).toCharArray();
+        if (mti.length < 4)
+            return false;
+        return Character.getNumericValue(mti[2]) % 2 == 0;
     }
+
     /**
-     * @return true if message "seems not to be" a request
-     * @exception ISOException on MTI not set
+     * @return true if message "seems not to be" a response
      */
-    public boolean isResponse() throws ISOException {
-        return !isRequest();
+    public boolean isResponse() {
+        if (getString(0) == null)
+            return false;
+        char[] mti = getString(0).toCharArray();
+        if (mti.length < 4)
+            return false;
+        return Character.getNumericValue(mti[2]) % 2 != 0;
     }
+
     /**
      * @return true if message is Retransmission
      * @exception ISOException on MTI not set
@@ -938,7 +930,7 @@ public class ISOMsg extends ISOComponent
      * @exception ISOException on MTI not set or it is not a request
      */
     public void setResponseMTI() throws ISOException {
-        if (!isRequest())
+        if (isResponse())
             throw new ISOException ("not a request - can't set response MTI");
 
         String mti = getMTI();
@@ -965,8 +957,10 @@ public class ISOMsg extends ISOComponent
      * @exception ISOException on MTI not set or it is not a request
      */
     public void setRetransmissionMTI() throws ISOException {
-        if (!isRequest())
-            throw new ISOException ("not a request");
+        if (isInner())
+            throw new IllegalStateException("It is inner message element");
+        if (isResponse())
+            throw new IllegalStateException ("not a request");
 
         set (new ISOField (0, getMTI().substring(0,3) + "1"));
     }
@@ -1053,7 +1047,6 @@ public class ISOMsg extends ISOComponent
         fieldNumber = in.readShort();
         byte fieldType;
         ISOComponent c;
-        try {
             while ((fieldType = in.readByte()) != 'E') {
                 c = null;
                 switch (fieldType) {
@@ -1086,10 +1079,6 @@ public class ISOMsg extends ISOComponent
                     set (c);
                 }
             }
-        }
-        catch (ISOException e) {
-            throw new IOException (e.getMessage());
-        }
     }
     /**
      * Let this ISOMsg object hold a weak reference to an ISOSource

@@ -102,7 +102,7 @@ public class ISOMsgRef {
 
 
         @Override
-        public void set(final ISOComponent c) throws ISOException {
+        public void set(final ISOComponent c) {
             delegate.set(c);
         }
 
@@ -352,7 +352,7 @@ public class ISOMsgRef {
         }
 
         @Override
-        public void setMTI(String mti) throws ISOException {
+        public void setMTI(String mti) {
             delegate.setMTI(mti);
         }
 
@@ -362,12 +362,12 @@ public class ISOMsgRef {
         }
 
         @Override
-        public String getMTI() throws ISOException {
+        public String getMTI() {
             return delegate.getMTI();
         }
 
         @Override
-        public boolean isRequest() throws ISOException {
+        public boolean isRequest() {
             return delegate.isRequest();
         }
     }
