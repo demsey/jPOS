@@ -57,9 +57,99 @@ public class TLVList implements Serializable, Loggeable {
 
     private final List<TLVMsg> tags = new ArrayList<>();
 
+    /**
+     * Enforces fixed tag size.
+     * <p>
+     * Zero means that the tag size will be determined in accordance with
+     * ISO/IEC 7816.
+     */
+    private int tagSize = 0;
+
+    /**
+     * Enforces fixed length size.
+     * <p>
+     * Zero means that the length size will be determined in accordance with
+     * ISO/IEC 7816.
+     */
+    private int lengthSize = 0;
+
     private int tagToFind = -1;
     private int indexLastOccurrence = -1;
 
+    public static class TLVListBuilder {
+
+        private int tagSize = 0;
+        private int lengthSize = 0;
+
+        /**
+         * Creates instance of TLV engine builder.
+         *
+         * @return instance of TLV builder.
+         */
+        public static TLVListBuilder createInstance() {
+            return new TLVListBuilder();
+        }
+
+        /**
+         * Forces a fixed size of tag.
+         * <p>
+         * It disables tag size autodetection according with ISO/IEC 7816-4
+         * BER-TLV.
+         *
+         * @param tagSize The size of tag in bytes
+         * @return TLVList builder with fixed tag size
+         */
+        public TLVListBuilder fixedTagSize(int tagSize) {
+            if (tagSize <= 0)
+                throw new IllegalArgumentException("The fixed tag size must be greater than zero");
+
+            this.tagSize = tagSize;
+            return this;
+        }
+
+        /**
+         * Forces a fixed size of length.
+         * <p>
+         * It disables length size autodetection according with ISO/IEC 7816-4
+         * BER-TLV.
+         *
+         * @param lengthSize The size of length in bytes <i>(1 - 4)</i>
+         * @return TLVList builder with fixed length size
+         */
+        public TLVListBuilder fixedLengthSize(int lengthSize) {
+            if (lengthSize <= 0)
+                throw new IllegalArgumentException("The fixed length size must be greater than zero");
+
+            if (lengthSize > 4)
+                throw new IllegalArgumentException("The fixed length size must be greater than zero");
+
+            this.lengthSize = lengthSize;
+            return this;
+        }
+
+        /**
+         * Build TLV engine.
+         *
+         * @return configured TLV engine
+         */
+        public TLVList build() {
+            TLVList tl = new TLVList();
+            tl.tagSize = tagSize;
+            tl.lengthSize = lengthSize;
+            return tl;
+        }
+
+    }
+
+    /**
+     * Creates instance of TLV engine.
+     * <p>
+     * It is a shorter form of:
+     * <pre>{@code
+     *   TLVListBuilder.createInstance().build();
+     * }</pre>
+     *
+     */
     public TLVList() {
         super();
     }
@@ -124,10 +214,12 @@ public class TLVList implements Serializable, Loggeable {
      *
      * @param tag tag id
      * @param value tag value
+     * @return the TLV list instance
      * @throws IllegalArgumentException when contains tag with illegal id
      */
-    public void append(int tag, byte[] value) throws IllegalArgumentException {
+    public TLVList append(int tag, byte[] value) throws IllegalArgumentException {
         append(createTLVMsg(tag, value));
+        return this;
     }
 
     /**
@@ -135,10 +227,12 @@ public class TLVList implements Serializable, Loggeable {
      *
      * @param tag id
      * @param value in hexadecimal character representation
+     * @return the TLV list instance
      * @throws IllegalArgumentException when contains tag with illegal id
      */
-    public void append(int tag, String value) throws IllegalArgumentException {
+    public TLVList append(int tag, String value) throws IllegalArgumentException {
         append(createTLVMsg(tag, ISOUtil.hex2byte(value)));
+        return this;
     }
 
     /**
@@ -290,9 +384,8 @@ public class TLVList implements Serializable, Loggeable {
      * @return TLV message instance
      * @throws IllegalArgumentException when contains tag with illegal id
      */
-    @SuppressWarnings("deprecation")
     protected TLVMsg createTLVMsg(int tag, byte[] value) throws IllegalArgumentException {
-        return new TLVMsg(tag, value);
+        return new TLVMsg(tag, value, tagSize, lengthSize);
     }
 
     /**
