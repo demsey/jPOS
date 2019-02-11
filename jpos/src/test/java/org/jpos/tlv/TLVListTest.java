@@ -558,6 +558,45 @@ public class TLVListTest {
         assertFalse(instance.getTags().isEmpty());
     }
 
+    @Test
+    public void testUnpackFixedTagOne() {
+        instance = BUILDER_FT1.build();
+        instance.unpack(ISOUtil.hex2byte("0003112233"));
+
+        assertEquals(1, instance.getTags().size());
+        TLVMsg res = instance.find(0);
+        assertArrayEquals(ISOUtil.hex2byte("03"), res.getL());
+        assertArrayEquals(ISOUtil.hex2byte("112233"), res.getValue());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnpackFixeTagOneWith0x00Padding1() {
+        instance = BUILDER_FT1.build();
+        instance.unpack(ISOUtil.hex2byte("000003112233"));
+    }
+
+    @Test
+    public void testUnpackFixedLengthTwo() {
+        instance = BUILDER_FL2.build();
+        instance.unpack(ISOUtil.hex2byte("070003112233"));
+
+        assertEquals(1, instance.getTags().size());
+        TLVMsg res = instance.find(7);
+        assertArrayEquals(ISOUtil.hex2byte("0003"), res.getL());
+        assertArrayEquals(ISOUtil.hex2byte("112233"), res.getValue());
+    }
+
+    @Test
+    public void testUnpackFixedLengthTwoWith0x00Padding1() {
+        instance = BUILDER_FL2.build();
+        instance.unpack(ISOUtil.hex2byte("0007000311223300"));
+
+        assertEquals(1, instance.getTags().size());
+        TLVMsg res = instance.find(7);
+        assertArrayEquals(ISOUtil.hex2byte("0003"), res.getL());
+        assertArrayEquals(ISOUtil.hex2byte("112233"), res.getValue());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testUnpackInvalidLengthThrowsIllegalArgumentException() {
         byte[] buf = ISOUtil.hex2byte("14830000");

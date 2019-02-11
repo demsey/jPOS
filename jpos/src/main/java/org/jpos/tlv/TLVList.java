@@ -24,7 +24,6 @@ import org.jpos.util.Loggeable;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -354,7 +353,7 @@ public class TLVList implements Serializable, Loggeable {
      */
     private TLVMsg getTLVMsg(ByteBuffer buffer) throws IllegalArgumentException {
         int tag = getTAG(buffer);  // tag id 0x00 if tag not found
-        if (tag == SKIP_BYTE1)
+        if (tagSize == 0 && tag == SKIP_BYTE1)
             return null;
 
         // Get Length if buffer remains!
@@ -416,11 +415,10 @@ public class TLVList implements Serializable, Loggeable {
             // Get rest of Tag identifier
             do {
                 tag <<= 8;
-                try {
-                    b = buffer.get() & 0xff;
-                } catch (BufferUnderflowException ex) {
-                    throw new IllegalArgumentException("BAD TLV FORMAT: encoded tag id is too short", ex);
-                }
+                if (buffer.remaining() < 1)
+                    throw new IllegalArgumentException("BAD TLV FORMAT: encoded tag id is too short");
+
+                b = buffer.get() & 0xff;
                 tag |= b;
             } while ((b & EXT_LEN_MASK) == EXT_LEN_MASK);
         }
@@ -435,6 +433,9 @@ public class TLVList implements Serializable, Loggeable {
      * @throws IllegalArgumentException
      */
     private int getTAG(ByteBuffer buffer) throws IllegalArgumentException {
+        if (tagSize > 0)
+            return bytesToInt(readBytes(buffer, tagSize));
+
         skipBytes(buffer);
         return readTagID(buffer);
     }
@@ -446,6 +447,11 @@ public class TLVList implements Serializable, Loggeable {
      * @throws IllegalArgumentException
      */
     protected int getValueLength(ByteBuffer buffer) throws IllegalArgumentException {
+        if (lengthSize > 0) {
+            byte[] bb = readBytes(buffer, lengthSize);
+            return bytesToInt(bb);
+        }
+
         byte b = buffer.get();
         int count = b & LEN_SIZE_MASK;
         // check first byte for more bytes to follow
@@ -453,17 +459,30 @@ public class TLVList implements Serializable, Loggeable {
             return count;
 
         //fetch rest of bytes
-        byte[] bb = new byte[count];
-        try {
-            buffer.get(bb);
-        } catch (BufferUnderflowException ex) {
-            throw new IllegalArgumentException("BAD TLV FORMAT: encoded tag length is too short", ex);
-        }
+        byte[] bb = readBytes(buffer, count);
+        return bytesToInt(bb);
+    }
+
+    private int bytesToInt(byte[] bb){
         //adjust buffer if first bit is turn on
         //important for BigInteger reprsentation
         if ((bb[0] & 0x80) > 0)
             bb = ISOUtil.concat(new byte[1], bb);
+
         return new BigInteger(bb).intValue();
+    }
+
+    private byte[] readBytes(ByteBuffer buffer, int length) throws IllegalArgumentException {
+        if (length > buffer.remaining())
+            throw new IllegalArgumentException(
+                    String.format("BAD TLV FORMAT: (%d) remaining bytes are not"
+                            + " enough to get tag id of length (%d)"
+                            , buffer.remaining(), length
+                    )
+            );
+        byte[] bb = new byte[length];
+        buffer.get(bb);
+        return bb;
     }
 
     /**
