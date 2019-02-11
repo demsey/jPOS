@@ -10,6 +10,7 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'signing'
     apply plugin: 'pmd'
+    apply plugin: 'jacoco'
 
     group = 'org.jpos'
     version = '2.1.1-SNAPSHOT'
@@ -101,6 +102,17 @@ subprojects {
                 */
                 repository(url: 'file:///opt/local/maven')
             }
+        }
+    }
+    jacoco {
+        toolVersion = "0.8.1"
+//        reportsDir = file("$buildDir/customJacocoReportDir")
+    }
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("${buildDir}/reports/jacoco")
         }
     }
     test {
