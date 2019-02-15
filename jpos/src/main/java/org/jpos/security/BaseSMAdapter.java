@@ -128,9 +128,12 @@ public class BaseSMAdapter
         try {
             result = generateKeyImpl(keyLength, keyType);
             evt.addMessage(new SimpleMsg("result", "Generated Key", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -148,9 +151,12 @@ public class BaseSMAdapter
         try {
             result = generateKeyCheckValueImpl(kd);
             evt.addMessage(new SimpleMsg("result", "Generated Key Check Value", ISOUtil.hexString(result)));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -170,9 +176,12 @@ public class BaseSMAdapter
         try {
             result = translateKeySchemeImpl(key, destKeyScheme);
             evt.addMessage(new SimpleMsg("result", "Translate Key Scheme", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -193,9 +202,12 @@ public class BaseSMAdapter
         try {
             result = importKeyImpl(keyLength, keyType, encryptedKey, kek, checkParity);
             evt.addMessage(new SimpleMsg("result", "Imported Key", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -214,9 +226,12 @@ public class BaseSMAdapter
         try {
             result = exportKeyImpl(key, kek);
             evt.addMessage(new SimpleMsg("result", "Exported Key", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -236,9 +251,12 @@ public class BaseSMAdapter
         try {
             result = encryptPINImpl(pin, accountNumber);
             evt.addMessage(new SimpleMsg("result", "PIN under LMK", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -260,9 +278,12 @@ public class BaseSMAdapter
         try {
             result = decryptPINImpl(pinUnderLmk);
             evt.addMessage(new SimpleMsg("result", "clear PIN", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -281,9 +302,12 @@ public class BaseSMAdapter
         try {
             result = importPINImpl(pinUnderKd1, kd1);
             evt.addMessage(new SimpleMsg("result", "PIN under LMK", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -305,9 +329,12 @@ public class BaseSMAdapter
         try {
             result = translatePINImpl(pinUnderKd1, kd1, kd2, destinationPINBlockFormat);
             evt.addMessage(new SimpleMsg("result", "PIN under Data Key 2", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -334,9 +361,12 @@ public class BaseSMAdapter
         try {
             result = importPINImpl(pinUnderDuk, ksn, bdk, tdes);
             evt.addMessage(new SimpleMsg("result", "PIN under LMK", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -364,9 +394,12 @@ public class BaseSMAdapter
         try {
             result = translatePINImpl(pinUnderDuk, ksn, bdk, kd2, destinationPINBlockFormat,tdes);
             evt.addMessage(new SimpleMsg("result", "PIN under Data Key 2", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -386,9 +419,12 @@ public class BaseSMAdapter
         try {
             result = exportPINImpl(pinUnderLmk, kd2, destinationPINBlockFormat);
             evt.addMessage(new SimpleMsg("result", "PIN under Data Key 2", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -416,9 +452,12 @@ public class BaseSMAdapter
       try {
         result = generatePINImpl(accountNumber, pinLen, excludes);
         evt.addMessage(new SimpleMsg("result", "Generated PIN", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -441,9 +480,12 @@ public class BaseSMAdapter
       evt.addMessage(new SimpleMsg("command", "Print PIN", cmdParameters.toArray(new Loggeable[0])));
       try {
           printPINImpl(accountNo, pinUnderKd1, kd1, template, fields);
-      } catch (Exception e) {
-          evt.addMessage(e);
-          throw  e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
           Logger.log(evt);
       }
@@ -473,9 +515,12 @@ public class BaseSMAdapter
       try {
         result = calculatePVVImpl(pinUnderLMK, pvkA, pvkB, pvkIdx, excludes);
         evt.addMessage(new SimpleMsg("result", "Calculated PVV", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -508,9 +553,12 @@ public class BaseSMAdapter
       try {
         result = calculatePVVImpl(pinUnderKd1, kd1, pvkA, pvkB, pvkIdx, excludes);
         evt.addMessage(new SimpleMsg("result", "Calculated PVV", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -537,9 +585,12 @@ public class BaseSMAdapter
         boolean r = verifyPVVImpl(pinUnderKd1, kd1, pvkA, pvkB, pvki, pvv);
         evt.addMessage(new SimpleMsg("result", "Verification status", r ? "valid" : "invalid"));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -572,9 +623,12 @@ public class BaseSMAdapter
         result = calculateIBMPINOffsetImpl(pinUnderLmk, pvk,
                 decTab, pinValData, minPinLen, excludes);
         evt.addMessage(new SimpleMsg("result", "Calculated PIN offset", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -610,9 +664,12 @@ public class BaseSMAdapter
         result = calculateIBMPINOffsetImpl(pinUnderKd1, kd1, pvk,
                 decTab, pinValData, minPinLen, excludes);
         evt.addMessage(new SimpleMsg("result", "Calculated PIN offset", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -642,9 +699,12 @@ public class BaseSMAdapter
                  pinValData, minPinLen);
         evt.addMessage(new SimpleMsg("result", "Verification status", r ? "valid" : "invalid"));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -668,9 +728,12 @@ public class BaseSMAdapter
       try {
         result = deriveIBMPINImpl(accountNo, pvk, decTab,  pinValData, minPinLen,  offset);
         evt.addMessage(new SimpleMsg("result", "Derived PIN", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -694,9 +757,12 @@ public class BaseSMAdapter
       try {
         result = calculateCVVImpl(accountNo, cvkA, cvkB, expDate, serviceCode);
         evt.addMessage(new SimpleMsg("result", "Calculated CVV/CVC", result));
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -719,9 +785,12 @@ public class BaseSMAdapter
       try {
           result = calculateCAVVImpl(accountNo, cvk, upn, authrc, sfarc);
           evt.addMessage(new SimpleMsg("result", "Calculated CAVV/AAV", result));
-      } catch (Exception e) {
-          evt.addMessage(e);
-          throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
           Logger.log(evt);
       }
@@ -746,9 +815,12 @@ public class BaseSMAdapter
         boolean r = verifyCVVImpl(accountNo, cvkA, cvkB, cvv, expDate, serviceCode);
         evt.addMessage(new SimpleMsg("result", "Verification status", r ? "valid" : "invalid"));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -771,9 +843,12 @@ public class BaseSMAdapter
       try {
           r = verifyCAVVImpl(accountNo, cvk, cavv, upn, authrc, sfarc);
           evt.addMessage(new SimpleMsg("result", "Verification status", r));
-      } catch (Exception e) {
-          evt.addMessage(e);
-          throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
           Logger.log(evt);
       }
@@ -800,9 +875,12 @@ public class BaseSMAdapter
         boolean r = verifydCVVImpl(accountNo, imkac, dcvv, expDate, serviceCode, atc, mkdm);
         evt.addMessage(new SimpleMsg("result", "Verification status", r ? "valid" : "invalid"));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -844,9 +922,12 @@ public class BaseSMAdapter
         boolean r = verifyCVC3Impl(imkcvc3, accountNo, acctSeqNo, atc, upn, data, mkdm, cvc3);
         evt.addMessage(new SimpleMsg("result", "Verification status", r ? "valid" : "invalid"));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -874,9 +955,12 @@ public class BaseSMAdapter
         boolean r = verifyARQCImpl(mkdm, skdm, imkac, accoutNo, acctSeqNo, arqc, atc, upn, transData);
         evt.addMessage(new SimpleMsg("result", "Verification status", r ? "valid" : "invalid"));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -909,9 +993,12 @@ public class BaseSMAdapter
             , arqc, atc, upn, arpcMethod, arc, propAuthData);
         evt.addMessage(new SimpleMsg("result", "Generated ARPC", result));
         return result;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -945,9 +1032,12 @@ public class BaseSMAdapter
                                                    acctSeqNo, arqc, atc, upn, transData, arpcMethod, arc, propAuthData);
         evt.addMessage(new SimpleMsg("result", "ARPC", result == null ? "" : ISOUtil.hexString(result)));
         return result;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -974,9 +1064,12 @@ public class BaseSMAdapter
         byte[] mac = generateSM_MACImpl(mkdm, skdm, imksmi, accountNo, acctSeqNo, atc, arqc, data);
         evt.addMessage(new SimpleMsg("result", "Generated MAC", mac!=null ? ISOUtil.hexString(mac) : ""));
         return mac;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+      } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+      } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -1021,9 +1114,12 @@ public class BaseSMAdapter
         };
         evt.addMessage(new SimpleMsg("results", "Complex results", cmdResults));
         return r;
-      } catch (Exception e) {
-        evt.addMessage(e);
-        throw e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
       } finally {
         Logger.log(evt);
       }
@@ -1062,9 +1158,12 @@ public class BaseSMAdapter
             if(iv != null)
                 r.add(new SimpleMsg("result", "Initialization Vector", iv));
             evt.addMessage(new SimpleMsg("results", r));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1104,9 +1203,12 @@ public class BaseSMAdapter
             if(iv != null)
                 r.add(new SimpleMsg("result", "Initialization Vector", iv));
             evt.addMessage(new SimpleMsg("results", r));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1125,9 +1227,12 @@ public class BaseSMAdapter
         try {
             result = generateCBC_MACImpl(data, kd);
             evt.addMessage(new SimpleMsg("result", "CBC-MAC", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1146,9 +1251,12 @@ public class BaseSMAdapter
         try {
             result = generateEDE_MACImpl(data, kd);
             evt.addMessage(new SimpleMsg("result", "EDE-MAC", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1166,9 +1274,12 @@ public class BaseSMAdapter
         try {
             result = translateKeyFromOldLMKImpl(kd);
             evt.addMessage(new SimpleMsg("result", "Translated Key under new LMK", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1191,9 +1302,12 @@ public class BaseSMAdapter
                   new SimpleMsg("result", "Private Key", result.getValue1().getKeyBytes())
             };
             evt.addMessage(new SimpleMsg("results", "Complex results", cmdResults));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1214,9 +1328,12 @@ public class BaseSMAdapter
         try {
             result = calculateSignatureImpl(hash, privateKey, data);
             evt.addMessage(new SimpleMsg("result", "Data Signature", result));
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
@@ -1232,9 +1349,12 @@ public class BaseSMAdapter
         evt.addMessage(new SimpleMsg("command", "Erase the key change storage", cmdParameters));
         try {
             eraseOldLMKImpl();
-        } catch (Exception e) {
-            evt.addMessage(e);
-            throw  e instanceof SMException ? (SMException) e : new SMException(e);
+        } catch (SMException ex) {
+            evt.addMessage(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            evt.addMessage(ex);
+            throw new SMException(ex);
         } finally {
             Logger.log(evt);
         }
