@@ -89,10 +89,15 @@ subprojects {
         }
         repositories {
             maven {
-                def releasesRepoUrl = mavenCentralRepo
-                def snapshotsRepoUrl = 'file:///opt/local/maven'
-                url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
-                if (!isSnapshot) {
+                url = mavenCentralRepo
+                if (project.hasProperty("upload.repository.releases"))
+                    url = project.properties["upload.repository.releases"]
+                if (isSnapshot) {
+                    url = 'file:///opt/local/maven'
+                    if (project.hasProperty("upload.repository.snapshots"))
+                        url = project.properties["upload.repository.snapshots"]
+                }
+                if (!isSnapshot || snapshotCredentialsRequired.toBoolean()) {
                     credentials {
                         if (project.hasProperty("mavenCentralUsername"))
                             username = mavenCentralUsername
