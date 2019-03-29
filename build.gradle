@@ -20,6 +20,13 @@ subprojects {
         'https://oss.sonatype.org/content/repositories/snapshots/' :
         'https://oss.sonatype.org/service/local/staging/deploy/maven2';
 
+    def uploadRepo = isSnapshot ?
+        project.properties["upload.repository.snapshots"] :
+        project.properties["upload.repository.releases"];
+
+    if (uploadRepo != null)
+        mavenCentralRepo = uploadRepo;
+
     configurations.compile.transitive = true
     javadoc.failOnError = false
     pmd.ignoreFailures = true
@@ -94,12 +101,10 @@ subprojects {
             mavenDeployer {
                 pom.project pomConfig
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                /*
+
                 repository(url: mavenCentralRepo) {
-                    authentication(userName: mavenCentralUsername, password: mavenCentralPassword)
+                    authentication(userName: project.properties["upload.repository.user"], password: project.properties["upload.repository.password"])
                 }
-                */
-                repository(url: 'file:///opt/local/maven')
             }
         }
     }
