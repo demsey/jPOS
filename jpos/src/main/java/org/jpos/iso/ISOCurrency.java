@@ -158,28 +158,53 @@ public class ISOCurrency
         return new Object[]{strings[0], Double.valueOf(strings[1])};
     }
 
-    public static String getIsoCodeFromAlphaCode(String alphacode) throws IllegalArgumentException
+    /**
+     * Get ISO 4217 currency 3 digit code.
+     *
+     * @param code the 3 characters of iso currency code <i>(alfa or digit)</i>
+     * @return ISO 4217 currency 3 digit code
+     * @throws NullPointerException if currency {@code code} is {@code null}
+     * @throws IllegalArgumentException if currency not found
+     */
+    public static String getIsoCodeFromAlphaCode(String code)
+            throws NullPointerException, IllegalArgumentException
     {
-        try
-        {
-            Currency c = findCurrency(alphacode);
-            return ISOUtil.zeropad(Integer.toString(c.getIsoCode()), 3);
-        }
-        catch (ISOException e)
-        {
-            throw new IllegalArgumentException("Failed getIsoCodeFromAlphaCode/ zeropad failed?", e);
-        }
+        Currency c = findCurrency(code);
+        return String.format("%03d", c.getIsoCode());
     }
 
-    public static Currency getCurrency(int code) throws ISOException
+    /**
+     * Get currency instance.
+     *
+     * @param code the 3 digit of iso currency code
+     * @return the currency instance
+     * @throws IllegalArgumentException if currency not found
+     */
+    public static Currency getCurrency(int code) throws IllegalArgumentException
     {
-        final String isoCode = ISOUtil.zeropad(Integer.toString(code), 3);
+        String isoCode = String.format("%03d", code);
         return findCurrency(isoCode);
     }
 
-    public static Currency getCurrency(String code) throws ISOException
+    /**
+     * Get currency instance.
+     *
+     * @param code the 3 characters of iso currency code <i>(alfa or digit)</i>
+     * @return the currency instance
+     * @throws NullPointerException if currency {@code code} is {@code null}
+     * @throws IllegalArgumentException if currency not found
+     */
+    public static Currency getCurrency(String code)
+            throws NullPointerException, IllegalArgumentException
     {
-        final String isoCode = ISOUtil.zeropad(code, 3);
+        Objects.requireNonNull(code, "Currency code is required");
+        String isoCode = code;
+        if (code.length() < 3)
+            try {
+                isoCode = ISOUtil.zeropad(code, 3);
+            } catch (ISOException ex) {
+                // in this case findCurrency throws IllegalArgumentException
+            }
         return findCurrency(isoCode);
     }
 
@@ -223,6 +248,7 @@ public class ISOCurrency
 
     private static Currency findCurrency(String currency)
     {
+        Objects.requireNonNull(currency, "Currency code is required");
         final Currency c = currencies.get(currency.toUpperCase());
         if (c == null)
         {

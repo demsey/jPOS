@@ -24,10 +24,13 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 public class ISOCurrencyTest {
+
+    private Exception thrown;
 
     @Test
     public void testAllISOCurrenciesIncluded() {
@@ -53,8 +56,8 @@ public class ISOCurrencyTest {
     @Test
     public void testIsoStandardCurrencies() {
         // Pulled from ISO web site on Aug 3, 2016
-        Map<String, String> c = new HashMap<String, String>();
-        Map<String, Integer> cD = new HashMap<String, Integer>();
+        Map<String, String> c = new HashMap<>();
+        Map<String, Integer> cD = new HashMap<>();
         c.put("971", "AFN"); cD.put("971", 2); // Afghani AFGHANISTAN 
         c.put("978", "EUR"); cD.put("978", 2); // Euro ÅLAND ISLANDS 
         c.put("008", "ALL"); cD.put("008", 2); // Lek ALBANIA 
@@ -341,10 +344,101 @@ public class ISOCurrencyTest {
         assertEquals(new BigDecimal("1.234"), ISOCurrency.parseFromISO87String("000000001234", "048"), "3 decimals");
         assertEquals(new BigDecimal("1234"), ISOCurrency.parseFromISO87String("000000001234", "020"), "no decimals");
     }
+
     @Test
     public void testtoISO87String () {
         assertEquals("000000001234", ISOCurrency.toISO87String(new BigDecimal("12.34"), "840"), "2 decimals");
         assertEquals("000000001234", ISOCurrency.toISO87String(new BigDecimal("1.234"), "048"), "3 decimals");
         assertEquals("000000001234", ISOCurrency.toISO87String(new BigDecimal("1234"), "020"), "no decimals");
     }
+
+    @Test
+    public void tesGetIsoCodeFromAlphaCodeNull() {
+        thrown = assertThrows(NullPointerException.class,
+            () -> ISOCurrency.getIsoCodeFromAlphaCode(null)
+        );
+    }
+
+    @Test
+    public void tesGetIsoCodeFromAlphaCodeUnknown() {
+        thrown = assertThrows(IllegalArgumentException.class,
+            () -> ISOCurrency.getIsoCodeFromAlphaCode("111")
+        );
+    }
+
+    @Test
+    public void tesGetIsoCodeFromAlphaCodeWithAlpha() {
+        String res = ISOCurrency.getIsoCodeFromAlphaCode("USD");
+        assertEquals("840", res);
+    }
+
+    @Test
+    public void tesGetIsoCodeFromAlphaCodeWithDigits() {
+        String res = ISOCurrency.getIsoCodeFromAlphaCode("840");
+        assertEquals("840", res);
+    }
+
+    @Test
+    public void tesGetIsoCodeFromAlphaCodeWithShortDigits() {
+        thrown = assertThrows(IllegalArgumentException.class,
+            () -> ISOCurrency.getIsoCodeFromAlphaCode("36")
+        );
+    }
+
+    @Test
+    public void tesGetCurrencyNull() {
+        thrown = assertThrows(NullPointerException.class,
+            () -> ISOCurrency.getCurrency(null)
+        );
+    }
+
+    @Test
+    public void tesGetCurrencyUnknown() {
+        thrown = assertThrows(IllegalArgumentException.class,
+            () -> ISOCurrency.getCurrency("111")
+        );
+    }
+
+    @Test
+    public void tesGetCurrencyWithDigits() {
+        Currency res = ISOCurrency.getCurrency("840");
+        assertEquals(840, res.getIsoCode());
+        assertEquals("USD", res.getAlphaCode());
+    }
+
+    @Test
+    public void tesGetCurrencyWithShortDigits() {
+        Currency res = ISOCurrency.getCurrency("36");
+        assertEquals(36, res.getIsoCode());
+        assertEquals("AUD", res.getAlphaCode());
+    }
+
+    @Test
+    public void tesGetCurrencyIntNegative() {
+        thrown = assertThrows(IllegalArgumentException.class,
+            () -> ISOCurrency.getCurrency(-1)
+        );
+    }
+
+    @Test
+    public void tesGetCurrencyIntUnknown() {
+        thrown = assertThrows(IllegalArgumentException.class,
+            () -> ISOCurrency.getCurrency(111)
+        );
+    }
+
+    @Test
+    public void tesGetCurrencyInt() {
+        Currency res = ISOCurrency.getCurrency("840");
+        assertEquals(840, res.getIsoCode());
+        assertEquals("USD", res.getAlphaCode());
+    }
+
+    @Test
+    public void tesGetCurrencyIntShort() {
+        Currency res = ISOCurrency.getCurrency(36);
+        assertEquals(36, res.getIsoCode());
+        assertEquals("AUD", res.getAlphaCode());
+    }
+
 }
