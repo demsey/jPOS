@@ -110,7 +110,13 @@ subprojects {
     }
 
     signing {
-        required { !isSnapshot }
+        def isSigned = isSnapshot
+        if (project.hasProperty("upload.repository.releases"))
+            isSigned = false;
+        else if (project.hasProperty("upload.repository.snapshots"))
+            isSigned = false;
+
+        required { isSigned }
         sign publishing.publications.mavenJava
     }
 
