@@ -372,6 +372,8 @@ public class QFactory {
             if (obj instanceof XmlConfigurable)
                 ((XmlConfigurable)obj).setConfiguration(e);
         } catch (ConfigurationException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
             throw new ConfigurationException (ex);
         }
     }
